@@ -17,10 +17,10 @@
           <form class="needs-validation" novalidate>
             <div class="row">
               <div class="col-md-12 mb-3">
-                <label for="newUserId">User</label>
-                <select class="custom-select" v-model="newUserId" id="newUserId">
+                <label for="newUser">User</label>
+                <select class="custom-select" v-model="newUser" id="newUser">
                   <option value="">Select User</option>
-                  <option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id" :selected="user.id === u.id">{{ u.first_name }} {{ u.last_name }} - {{ u.persona }}</option>
+                  <option v-for="u in users" v-bind:key="u.id" v-bind:value="u.id" :selected="userID === u.id">{{ u.first_name }} {{ u.last_name }} - {{ u.persona }}</option>
                 </select>
               </div>
             </div>
@@ -70,7 +70,6 @@
 <script>
 import { RepositoryFactory } from '@/repositories/RepositoryFactory'
 import { AnalyticsHandler } from '@/analytics/AnalyticsHandler'
-import { AmplifyEventBus } from 'aws-amplify-vue';
 
 import AmplifyStore from '@/store/store'
 
@@ -90,11 +89,11 @@ export default {
       user: null,
       saving: false,
       users: [],
-      newUserId: AmplifyStore.state.user.id
+      newUser: AmplifyStore.state.userID
     }
   },
   created () {
-    this.getUser(AmplifyStore.state.user.id)
+    this.getUser(AmplifyStore.state.userID)
     this.getUsers()
   },
   methods: {
@@ -107,8 +106,7 @@ export default {
     },
     async getUsers() {
       // More users than we can display in dropdown so limit to 300.
-      const start = Math.max(0, parseInt(AmplifyStore.state.user.id) - 100)
-      const { data } = await UsersRepository.get(start, start + 300)
+      const { data } = await UsersRepository.get(0, 300)
       this.users = data
     },     
     async saveChanges () {
@@ -118,11 +116,10 @@ export default {
         const { data } = await UsersRepository.updateUser(this.user)
         this.user = data
 
+        AmplifyStore.commit('setUserID', this.user.id);
         AmplifyStore.commit('setUser', this.user);
 
         AnalyticsHandler.identify(this.user)
-
-        AmplifyEventBus.$emit('authState', 'profileChanged')
 
         swal({
           title: "Information Updated",
@@ -138,7 +135,7 @@ export default {
     }
   },
   watch: { 
-    newUserId: function(newVal) {
+    newUser: function(newVal) {
       this.getUser(newVal)
     }
   }

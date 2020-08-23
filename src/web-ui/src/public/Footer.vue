@@ -4,7 +4,7 @@
       <hr/>
       <div class="row">
         <div class="copyright text-muted mt-2 mb-2 mx-auto col-12 text-center">
-          Retail Demo Store &copy; 2019-2020
+          Autothon Retail Demo Store &copy; 2020-2021
         </div>
       </div>
     </div>

@@ -27,7 +27,7 @@
 
     <div class="container" v-if="cart">
       <div class="row justify-content-center" v-if="showCheckout == true">
-        <div class="alert alert-secondary">This storefront is not real. Please do not enter actual billing information. Your order will not be fulfilled.</div>
+        <div class="alert alert-primary">This website is not real. Please do not enter actual billing information or your credit card details!!</div>
       </div>
       <div class="row text-left" v-if="showCheckout == true">
         <div class="col-md-4 order-md-2 mb-4">
@@ -100,14 +100,18 @@
                 <label for="country">Country</label>
                 <select class="custom-select d-block w-100" id="country" v-model="order.billing_address.country" required>
                   <option value="">Choose...</option>
-                  <option value="US">United States</option>
+                  <option value="IN">India</option>                  
                 </select>
               </div>
               <div class="col-md-4 mb-3">
                 <label for="state">State</label>
                 <select class="custom-select d-block w-100" id="state" v-model="order.billing_address.state" required>
                   <option value="">Choose...</option>
-                  <option value="CA">California</option>
+                  <option value="KA">Karnataka</option>
+                  <option value="MU">Mumbai</option>
+                  <option value="ND">New Delhi</option>
+                  <option value="TN">Tamil Nadu</option>
+                  <option value="JH">Jharkhand</option>                  
                 </select>
               </div>
               <div class="col-md-3 mb-3">
@@ -242,6 +246,8 @@ export default {
 
       OrdersRepository.createOrder(this.cart).then(response => {
         
+        console.log(response)
+
         AnalyticsHandler.orderCompleted(this.user, this.cart, response.data)
 
         swal({

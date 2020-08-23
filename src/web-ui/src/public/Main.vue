@@ -35,6 +35,7 @@
         <li data-target="#featuredProducts" data-slide-to="0" class="active"></li>
         <li data-target="#featuredProducts" data-slide-to="1"></li>
         <li data-target="#featuredProducts" data-slide-to="2"></li>
+        <li data-target="#featuredProducts" data-slide-to="3"></li>
       </ol>
       <div class="carousel-inner">
         <div class="carousel-item active">
@@ -46,19 +47,27 @@
             </div>
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" v-bind:src="imageRootURL + 'outdoors/4.jpg'" alt="Second slide">
+          <img class="d-block w-100" v-bind:src="imageRootURL + 'outdoors/13.jpg'" alt="Second slide">
             <div class="carousel-caption">
-              <h5>Lets Go Fishing</h5>
-              <p>Start gearing up for summer adventures with our new fishing gear!</p>
+              <h5>Flex your muscles</h5>
+              <p>The perfect Yoga mat to help you keep active during this lockdown</p>
               <router-link class="btn btn-outline-light" :to="{name:'CategoryDetail', params: {id: 'outdoors'}}">See More</router-link> 
             </div>
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" v-bind:src="imageRootURL + 'beauty/3.jpg'" alt="Third slide">
+          <img class="d-block w-100" v-bind:src="imageRootURL + 'beauty/5.jpg'" alt="Third slide">
               <div class="carousel-caption">
-              <h5>Beauty Products</h5>
+              <h5>Beauty Products - From across the world</h5>
               <p>Popular beauty products now back in stock.</p>
               <router-link class="btn btn-outline-light" :to="{name:'CategoryDetail', params: {id: 'beauty'}}">See More</router-link> 
+            </div>
+        </div>
+        <div class="carousel-item">
+          <img class="d-block w-100" v-bind:src="imageRootURL + 'housewares/3.jpg'" alt="Fourth slide">
+              <div class="carousel-caption">
+              <h5>Housewares</h5>
+              <p>The perfect gift for your home!!</p>
+              <router-link class="btn btn-outline-light" :to="{name:'CategoryDetail', params: {id: 'housewares'}}">See More</router-link> 
             </div>
         </div>
       </div>
@@ -89,7 +98,7 @@
     </div>
 
     <!-- Recommended/Featured Product List -->
-    <div class="container mt-5 user-recommendations" v-if="user">
+    <div class="container mt-5 user-recommendations" v-if="userID">
       <h4>{{ this.display | capitalize }}</h4>
       <div v-if="explain_recommended" class="text-muted text-center">
         <small><em><i v-if="active_experiment" class="fa fa-balance-scale"></i><i v-if="personalized" class="fa fa-user-check"></i> {{ explain_recommended }}</em></small>
@@ -108,7 +117,7 @@
         </div>
       </div>
     </div>
-    <div class="container guest-recommendations" v-if="!user">
+    <div class="container guest-recommendations" v-if="!userID">
       <h4>{{ this.display | capitalize }}</h4>
       <div class="container mb-4" v-if="!guest_recommended.length">
         <i class="fas fa-spinner fa-spin fa-3x"></i>
@@ -165,8 +174,8 @@ export default {
   },
   methods: {
     async getRecommendations() {
-      if (this.user) {
-        this.display = 'Inspired by your shopping trends'
+      if (this.userID) {
+        this.display = 'Inspired by your shopping trends - We recommend the below'
         this.getUserRecommendations()
       }
       else {
@@ -176,12 +185,12 @@ export default {
       }
     },
     async getUserRecommendations() {
-      const response = await RecommendationsRepository.getRecommendationsForUser(this.user.id, '', MaxRecommendations, ExperimentFeature)
+      const response = await RecommendationsRepository.getRecommendationsForUser(this.userID, '', MaxRecommendations, ExperimentFeature)
 
       if (response.headers) {
         if (response.headers['x-personalize-recipe']) {
           this.personalized = true
-          this.explain_recommended = 'Personalize recipe: ' + response.headers['x-personalize-recipe']
+          // this.explain_recommended = 'Personalize recipe: ' + response.headers['x-personalize-recipe']
         }
         if (response.headers['x-experiment-name']) {
           this.active_experiment = true
@@ -192,7 +201,7 @@ export default {
       this.user_recommended = response.data
 
       if (this.user_recommended.length > 0 && 'experiment' in this.user_recommended[0]) {
-        AnalyticsHandler.identifyExperiment(this.user, this.user_recommended[0].experiment)
+        AnalyticsHandler.identifyExperiment(this.user_recommended[0].experiment)
       }
     },
     async getCategories () {
@@ -203,6 +212,9 @@ export default {
   computed: {
     user() { 
       return AmplifyStore.state.user
+    },
+    userID() { 
+      return AmplifyStore.state.userID
     },
     imageRootURL() {
       return process.env.VUE_APP_IMAGE_ROOT_URL ? process.env.VUE_APP_IMAGE_ROOT_URL : '/images/'

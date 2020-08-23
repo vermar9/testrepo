@@ -6,14 +6,14 @@
       <nav class="navbar fixed-top navbar-secondary bg-light">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item text-dark">
-            <i class="fab fa-twitter"></i>
+            <!-- <i class="fab fa-twitter"></i>
             <i class="fab fa-facebook ml-2"></i>
-            <i class="fab fa-instagram ml-2"></i>
+            <i class="fab fa-instagram ml-2"></i>-->
           </li>
         </ul>
         <ul class="navbar-nav mx-auto d-none d-md-block">
           <li class="nav-item text-dark">
-            Free Shipping on All Orders over $100
+            Free Shipping on All Orders over Rs.10000/-
           </li>                  
         </ul>   
         <ul class="navbar-nav ml-auto">
@@ -33,7 +33,7 @@
             <i class="fa fa-square fa-stack-2x"></i>
             <i class="fa fa-globe-americas fa-stack-1x fa-inverse"></i>
           </span>
-          &nbsp;Retail Demo Store  
+          &nbsp;Autothon Retail Demo Store - You Select We Deliver!!
         </router-link>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item" v-if="!user" >
@@ -41,13 +41,9 @@
           </li>
           <li class="nav-item dropdown" v-if="user">
             <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span v-if="user.first_name">{{ user.first_name }}</span>
-              <span v-if="!user.first_name">{{ user.username }}</span>
+              {{ user.username }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" id="profileDropdown" aria-labelledby="navbarDropdown">
-              <span class="dropdown-item-text small" v-if="user.first_name && user.last_name">{{ user.first_name }} {{ user.last_name }} ({{ user.username }})</span>
-              <span class="dropdown-item-text small text-muted" v-if="user.persona">{{ user.persona }}</span>
-              <div class="dropdown-divider" v-if="user.persona"></div>
               <router-link class="dropdown-item" :to="{name:'Orders'}">Orders</router-link>  
               <router-link class="dropdown-item" :to="{name:'Profile'}">Profile</router-link>  
               <div class="dropdown-divider"></div>
@@ -84,7 +80,7 @@ export default {
     },
     signOut: function() {
       let vm = this
-      Auth.signOut({ global: true })
+      Auth.signOut()
         // eslint-disable-next-line no-unused-vars
         .then(data => {
           AmplifyEventBus.$emit('authState', 'signedOut')
